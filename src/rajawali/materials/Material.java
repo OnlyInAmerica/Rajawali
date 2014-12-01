@@ -29,6 +29,7 @@ import rajawali.materials.shaders.VertexShader;
 import rajawali.materials.shaders.fragments.LightsFragmentShaderFragment;
 import rajawali.materials.shaders.fragments.LightsVertexShaderFragment;
 import rajawali.materials.shaders.fragments.texture.AlphaMapFragmentShaderFragment;
+import rajawali.materials.shaders.fragments.texture.AlphaVideoFragmentShaderFragment;
 import rajawali.materials.shaders.fragments.texture.DiffuseTextureFragmentShaderFragment;
 import rajawali.materials.shaders.fragments.texture.EnvironmentMapFragmentShaderFragment;
 import rajawali.materials.shaders.fragments.texture.NormalMapFragmentShaderFragment;
@@ -490,6 +491,7 @@ public class Material extends AFrameTask {
 			
 			boolean hasCubeMaps = false;
 			boolean hasVideoTexture = false;
+            boolean hasAlphaVideoTexture = false;
 			
 			for(int i=0; i<mTextureList.size(); i++)
 			{
@@ -497,6 +499,8 @@ public class Material extends AFrameTask {
 								
 				switch(texture.getTextureType())
 				{
+                case ALPHA_VIDEO_TEXTURE:
+                    hasAlphaVideoTexture = true;
 				case VIDEO_TEXTURE:
 					hasVideoTexture = true;
 					// no break statement, add the video texture to the diffuse textures
@@ -649,6 +653,10 @@ public class Material extends AFrameTask {
 				AlphaMapFragmentShaderFragment fragment = new AlphaMapFragmentShaderFragment(alphaMapTextures);
 				mFragmentShader.addShaderFragment(fragment);
 			}
+
+            if (hasAlphaVideoTexture) {
+                mFragmentShader.addShaderFragment(new AlphaVideoFragmentShaderFragment(diffuseTextures));
+            }
 			
 			checkForPlugins(PluginInsertLocation.PRE_TRANSFORM);
 			checkForPlugins(PluginInsertLocation.POST_TRANSFORM);
